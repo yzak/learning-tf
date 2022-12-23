@@ -8,6 +8,13 @@
 ## 作るもの
 ![image](/img/learning-tf.png)
 
+### 前回からの変更内容
+- `main.tf`
+  - バージョン情報を、[versions.tf](./versions.tf)に移動
+  - プロバイダ情報を、[provider.tf](./provider.tf)に移動
+  - パブリックサブネットの構築を追加
+  - パブリックサブネットが利用するルートテーブルの構築を追加
+
 ## 1. Cloud9を動かすVPCを作成
 - AWSマネジメントコンソールで、VPCと入力し、VPCを開く
 - `VPCを作成`を実行し、以下の内容でVPCを作成する
@@ -52,7 +59,7 @@ Network settings | Connection | Secure Shell(SSH)
 - `terraform plan`
 - `terraform apply`
   - `yes`を入力する
-- AWSマネジメントコンソールで、VPCを確認し、`myproject-vpc`が作成されていることを確認する
+- AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
 - `terraform destroy`
   - `yes`を入力する
-- AWSマネジメントコンソールで、VPCを確認し、`myproject-vpc`が消えたことを確認する
+- AWSマネジメントコンソールで、AWSリソースが消えたことを確認する
