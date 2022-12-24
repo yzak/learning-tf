@@ -51,6 +51,7 @@ Network settings | Connection | Secure Shell(SSH)
   - `main.tf`と入力
 - `main.tf`に、[main.tf](./main.tf)の内容を貼り付けて保存する
 - 画面下部のターミナルで、コマンドを実行する
+- `terraform init`
 - `terraform plan`
 - `terraform apply`
   - `yes`を入力する
