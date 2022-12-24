@@ -5,6 +5,8 @@
 
 [GetStarted - AWS](https://developer.hashicorp.com/terraform/tutorials/aws-get-started)
 
+[AWS Provider Document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+
 ## 作るもの
 ![image](/img/learning-tf.png)
 
