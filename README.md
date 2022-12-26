@@ -11,21 +11,22 @@
 
 [Google Cloud 環境ディレクトリを使用する](https://cloud.google.com/docs/terraform/best-practices-for-terraform#environment-directories)
 
+[Configure Default Tags for AWS Resources](https://developer.hashicorp.com/terraform/tutorials/aws/aws-default-tags)
+
 ## 作るもの
 ![image](/img/learning-tf.png)
 
 ### 今回やること
-- `main.tf`
-  - 開発用と本番用では、設定内容やリソースの数が異なることがあります
-  - 開発用は、サブネット２つ。本番用は、３つといったように各環境の定義を分けます
-  - `environments/dev/main.tf`にファイルを移動
-  - `environments/prd/main.tf`にファイルを移動し、サブネットを3つにする
-- `provider.tf`
-  - `environments/dev/provider.tf`にファイルを移動
-  - `environments/prd/provider.tf`にファイルを移動
-- `versions.tf`
-  - `environments/dev/versions.tf`にファイルを移動
-  - `environments/prd/versions.tf`にファイルを移動
+- `environments/dev/provider.tf`
+  - Terraformで作成するリソース全てに共通のタグ(default_tags)を設定
+- `environments/prd/provider.tf`
+  - Terraformで作成するリソース全てに共通のタグ(default_tags)を設定
+- `environments/dev/main.tf`
+  - タグの`Name`を`プロジェクト名`-`環境名`-`サービス名`に設定
+  - localに、タグの先頭文字列（プレフィックス）をを定義([参考](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/default_tags))
+- `environments/prd/main.tf`
+  - タグの`Name`を`プロジェクト名`-`環境名`-`サービス名`に設定
+  - localに、タグの先頭文字列（プレフィックス）をを定義([参考](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/default_tags))
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く

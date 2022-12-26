@@ -1,3 +1,4 @@
+data "aws_default_tags" "_" {}
 locals {
   vpc_cidr_block = "10.0.0.0/21"
   public_subnets = {
@@ -12,6 +13,7 @@ locals {
       az   = "ap-northeast-1c"
     },
   }
+  prefix = "${data.aws_default_tags._.tags.Project}-${data.aws_default_tags._.tags.Env}"
 }
 #----------------------------------------
 # VPCの作成
@@ -23,7 +25,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
 
   tags = {
-    Name = "myproject-vpc"
+    Name = "${local.prefix}-vpc"
   }
 }
 
@@ -35,7 +37,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "myproject-internet-gateway"
+    Name = "${local.prefix}-internet-gateway"
   }
 }
 
@@ -52,7 +54,7 @@ resource "aws_subnet" "public" {
   availability_zone = each.value.az
 
   tags = {
-    Name = "myproject-${each.key}"
+    Name = "${local.prefix}-${each.key}"
   }
 }
 
@@ -65,7 +67,7 @@ resource "aws_route_table" "public" {
   vpc_id   = aws_vpc.main.id
 
   tags = {
-    Name = "myproject-${each.key}-rtb"
+    Name = "${local.prefix}-${each.key}-rtb"
   }
 }
 
