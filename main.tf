@@ -1,17 +1,24 @@
-#----------------------------------------
-# Terraformバージョン、AWSプロバイダバージョンの指定はversions.tfへ移動
-#----------------------------------------
-
-#----------------------------------------
-# AWSのリージョン指定は、provider.tfへ移動
-#----------------------------------------
-
+locals {
+  vpc_cidr_block = "10.0.0.0/21"
+  public_subnets = {
+    public-1a = {
+      name = "public-1a"
+      cidr = "10.0.0.0/24"
+      az   = "ap-northeast-1a"
+    },
+    public-1c = {
+      name = "public-1c"
+      cidr = "10.0.1.0/24"
+      az   = "ap-northeast-1c"
+    },
+  }
+}
 #----------------------------------------
 # VPCの作成
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 #----------------------------------------
 resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/21"
+  cidr_block           = local.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true
 
@@ -38,23 +45,14 @@ resource "aws_internet_gateway" "main" {
 #----------------------------------------
 
 # パブリックサブネットの作成
-resource "aws_subnet" "public-1a" {
+resource "aws_subnet" "public" {
+  for_each          = local.public_subnets
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.0.0/24"
-  availability_zone = "ap-northeast-1a"
+  cidr_block        = each.value.cidr
+  availability_zone = each.value.az
 
   tags = {
-    Name = "myproject-public-subnet-1a"
-  }
-}
-
-resource "aws_subnet" "public-1c" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "ap-northeast-1c"
-
-  tags = {
-    Name = "myproject-public-subnet-1c"
+    Name = "myproject-${each.key}"
   }
 }
 
@@ -62,18 +60,24 @@ resource "aws_subnet" "public-1c" {
 # ルートテーブルの作成
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table
 #----------------------------------------
-#  パブリックサブネットのルートテーブルの作成
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-  #インターネットゲートウェイ向けのルート追加
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
+  for_each = local.public_subnets
+  vpc_id   = aws_vpc.main.id
 
   tags = {
-    Name = "myproject-public-rtb"
+    Name = "myproject-${each.key}-rtb"
   }
+}
+
+#----------------------------------------
+# IGW用のルート作成
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route
+#----------------------------------------
+resource "aws_route" "igw" {
+  for_each               = local.public_subnets
+  route_table_id         = aws_route_table.public[each.key].id
+  gateway_id             = aws_internet_gateway.main.id
+  destination_cidr_block = "0.0.0.0/0"
 }
 
 #----------------------------------------
@@ -82,13 +86,8 @@ resource "aws_route_table" "public" {
 #----------------------------------------
 
 # パブリックサブネットにルートテーブルを紐づけ
-resource "aws_route_table_association" "public-1a" {
-  subnet_id      = aws_subnet.public-1a.id
-  route_table_id = aws_route_table.public.id
+resource "aws_route_table_association" "public" {
+  for_each       = local.public_subnets
+  subnet_id      = aws_subnet.public[each.key].id
+  route_table_id = aws_route_table.public[each.key].id
 }
-
-resource "aws_route_table_association" "public-1c" {
-  subnet_id      = aws_subnet.public-1c.id
-  route_table_id = aws_route_table.public.id
-}
-

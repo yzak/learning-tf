@@ -7,16 +7,15 @@
 
 [AWS Provider Document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
+[The for_each Meta-Argument](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each)
+
 ## 作るもの
 ![image](/img/learning-tf.png)
 
 ### 今回やること
 - `main.tf`
-  - バージョン情報を、[versions.tf](./versions.tf)に移動
-  - プロバイダ情報を、[provider.tf](./provider.tf)に移動
-  - [AWS Provider Document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)を見ながら
-    - パブリックサブネットの構築を追加
-    - パブリックサブネットが利用するルートテーブルの構築を追加
+  - PublicSubnetを作っている箇所を`foreach`を用いて管理しやすくする
+  - CIDRブロックをlocalsに定義したので、VPCのCIDRブロックも同じく定義する
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
