@@ -13,20 +13,17 @@
 
 [Configure Default Tags for AWS Resources](https://developer.hashicorp.com/terraform/tutorials/aws/aws-default-tags)
 
+[Modules Development Overview](https://developer.hashicorp.com/terraform/language/modules/develop)
+
 ## 作るもの
 ![image](/img/learning-tf.png)
 
 ### 今回やること
-- `environments/dev/provider.tf`
-  - Terraformで作成するリソース全てに共通のタグ(default_tags)を設定
-- `environments/prd/provider.tf`
-  - Terraformで作成するリソース全てに共通のタグ(default_tags)を設定
 - `environments/dev/main.tf`
-  - タグの`Name`を`プロジェクト名`-`環境名`-`サービス名`に設定
-  - localに、タグの先頭文字列（プレフィックス）をを定義([参考](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/default_tags))
 - `environments/prd/main.tf`
-  - タグの`Name`を`プロジェクト名`-`環境名`-`サービス名`に設定
-  - localに、タグの先頭文字列（プレフィックス）をを定義([参考](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/default_tags))
+  - 中の実装はほぼ同じ状態なので、共通化した`モジュール`として切り出す
+- `modules/network/vpc/main.tf`
+  - 切り出した共通処理を定義、VPC,Subnet,InternetGateway,RouteTable 等
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
