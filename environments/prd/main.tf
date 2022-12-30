@@ -21,8 +21,8 @@ locals {
   prefix = "${data.aws_default_tags._.tags.Project}-${data.aws_default_tags._.tags.Env}"
 }
 
-module "vpc" {
-  source         = "../../modules/network/vpc"
+module "base" {
+  source         = "../../modules/base"
   prefix         = local.prefix
   vpc_cidr_block = local.vpc_cidr_block
   public_subnets = local.public_subnets

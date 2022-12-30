@@ -22,8 +22,11 @@
 - `environments/dev/main.tf`
 - `environments/prd/main.tf`
   - 中の実装はほぼ同じ状態なので、共通化した`モジュール`として切り出す
-- `modules/network/vpc/main.tf`
+- `modules/base/main.tf`
   - 切り出した共通処理を定義、VPC,Subnet,InternetGateway,RouteTable 等
+
+### 公式モジュール
+- [AWS VPC Terraform module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest)
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -43,3 +46,4 @@
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが消えたことを確認する
 - `cd environments/prd`して、同じコマンドを実行
+

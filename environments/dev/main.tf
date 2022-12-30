@@ -20,8 +20,8 @@ locals {
 # module "リソースの名前(自由)"
 # source = "モジュールを定義したフォルダのパス"
 # パラメータ名(variables.tfで定義した名前) = モジュールに渡す値
-module "vpc" {
-  source         = "../../modules/network/vpc"
+module "base" {
+  source         = "../../modules/base"
   prefix         = local.prefix
   vpc_cidr_block = local.vpc_cidr_block
   public_subnets = local.public_subnets
@@ -30,13 +30,13 @@ module "vpc" {
 # モジュールの呼び出し結果の値を表示してみる
 # module.リソース名.output.tfの名前でアクセス可能
 output "vpc_id" {
-  value = module.vpc.vpc_id
+  value = module.base.vpc_id
 }
 
 output "public_subnet_1a" {
-  value = module.vpc.public_subnets["public-1a"].id
+  value = module.base.public_subnets["public-1a"].id
 }
 
 output "public_subnet_ids" {
-  value = [for value in module.vpc.public_subnets : value.id]
+  value = [for value in module.base.public_subnets : value.id]
 }
