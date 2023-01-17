@@ -2,6 +2,7 @@ from diagrams import Cluster, Diagram, Edge
 from diagrams.aws.network import InternetGateway
 from diagrams.aws.network import RouteTable
 from diagrams.aws.compute import EC2
+from diagrams.aws.database import RDS
 
 with Diagram("learning-tf", show=False, direction="TB"):
     with Cluster("AWS for development"):
@@ -9,10 +10,11 @@ with Diagram("learning-tf", show=False, direction="TB"):
             with Cluster("VPC 10.0.0.0/21"):
                 InternetGateway("InternetGateway")
                 with Cluster("AvalibitilyZone \n1a"):
+                    with Cluster("PrivateSubnet \n10.0.2.0/24"):
+                        RDS("DB")
+                        RouteTable("RouteTable\n1a")
                     with Cluster("PublicSubnet \n10.0.0.0/24"):
                         EC2("EC2")
-                        RouteTable("RouteTable\n1a")
-                    with Cluster("PrivateSubnet \n10.0.2.0/24"):
                         RouteTable("RouteTable\n1a")
                 with Cluster("AvalibitilyZone \n1c"):
                     with Cluster("PublicSubnet \n10.0.1.0/24"):

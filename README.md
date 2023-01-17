@@ -19,13 +19,20 @@
 
 ## 作るもの
 ![image](/img/learning-tf.png)
+- ※RDS構築時にAZを指定していないため、1a または 1cのどちらかに配置されますが、どちらでも問題ありません
 
 ### 今回やること
-- `modules/base/main.tf`
-  - `base`サービスにプライベートサブネットの各リソースを作成する定義を記載します
+- `modules/blog/ec2/output.tf`
+  - `blog`サービスの`rds`のインバウンド通信をEC2に限定するため、必要な情報を返却します
+- `modules/blog/rds/main.tf`
+  - `blog`サービスに`rds`に関する各リソースを作成する定義を記載します
+  - `variable.tf`,`output.tf`も記載します
+- `modules/blog/main.tf`
+  - `blog`サービスに`rds`を構築する定義を記載します
   - `variable.tf`,`output.tf`も記載します
 - `environments/dev/main.tf`
-  - `base`サービスにプライベートサブネットの情報を追加して呼び出します
+  - `blog`サービスにプライベートサブネットの情報を追加して呼び出します
+  - `blog`サービスで作成したRDSのアドレス情報を出力します
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -40,7 +47,17 @@
 - `terraform plan`
 - `terraform apply`
   - `yes`を入力する
+  - RDSの構築は5分ほどかかります
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
+- EC2にSSH接続できることを確認する(Teratermなど)
+  - `ssh -i myproject-dev-ec2.pem ec2-user@xxx.xxx(EC2のパブリックIP)`
+  - mysqlをインストールし、RDSへ接続します
+  - `sudo su -`
+  - `yum install -y mysql`
+  - `mysql -u wordpress -pwordpress -h xxx.xxxx(RDSのエンドポイント) `
+  - `exit`
+  - `exit`
+- Cloud9のターミナルに戻り
 - `terraform destroy`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが消えたことを確認する

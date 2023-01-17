@@ -7,11 +7,8 @@ variable "vpc_id" {
   type = string
 }
 
-variable "public_subnets" {
-  type = map(object({
-    id  = string
-    arn = string
-  }))
+variable "ec2_sgr_id" {
+  type = string
 }
 
 variable "private_subnets" {

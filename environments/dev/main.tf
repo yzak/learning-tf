@@ -41,10 +41,11 @@ module "base" {
 }
 
 module "blog" {
-  source         = "../../modules/blog"
-  prefix         = local.prefix
-  vpc_id         = module.base.vpc_id
-  public_subnets = module.base.public_subnets
+  source          = "../../modules/blog"
+  prefix          = local.prefix
+  vpc_id          = module.base.vpc_id
+  public_subnets  = module.base.public_subnets
+  private_subnets = module.base.private_subnets
 }
 
 # モジュールの呼び出し結果の値を表示してみる
@@ -71,4 +72,8 @@ output "private_subnet_ids" {
 
 output "ec2_public_ip" {
   value = module.blog.ec2_public_ip
+}
+
+output "rds_address" {
+  value = module.blog.rds_address
 }
