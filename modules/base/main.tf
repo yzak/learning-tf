@@ -76,3 +76,33 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public[each.key].id
   route_table_id = aws_route_table.public[each.key].id
 }
+
+# プライベートサブネットの作成
+resource "aws_subnet" "private" {
+  for_each          = var.private_subnets
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value.cidr
+  availability_zone = each.value.az
+
+  tags = {
+    Name = "${var.prefix}-${each.key}"
+  }
+}
+
+# ルートテーブルの作成
+resource "aws_route_table" "private" {
+  for_each = var.private_subnets
+  vpc_id   = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.prefix}-${each.key}-rtb"
+  }
+}
+
+# プライベートサブネットにルートテーブルを紐づけ
+resource "aws_route_table_association" "private" {
+  for_each       = var.private_subnets
+  subnet_id      = aws_subnet.private[each.key].id
+  route_table_id = aws_route_table.private[each.key].id
+}
+

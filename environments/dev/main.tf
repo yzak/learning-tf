@@ -13,6 +13,18 @@ locals {
       az   = "ap-northeast-1c"
     },
   }
+  private_subnets = {
+    private-1a = {
+      name = "private-1a"
+      cidr = "10.0.2.0/24"
+      az   = "ap-northeast-1a"
+    },
+    private-1c = {
+      name = "private-1c"
+      cidr = "10.0.3.0/24"
+      az   = "ap-northeast-1c"
+    },
+  }
   prefix = "${data.aws_default_tags._.tags.Project}-${data.aws_default_tags._.tags.Env}"
 }
 
@@ -21,10 +33,11 @@ locals {
 # source = "モジュールを定義したフォルダのパス"
 # パラメータ名(variables.tfで定義した名前) = モジュールに渡す値
 module "base" {
-  source         = "../../modules/base"
-  prefix         = local.prefix
-  vpc_cidr_block = local.vpc_cidr_block
-  public_subnets = local.public_subnets
+  source          = "../../modules/base"
+  prefix          = local.prefix
+  vpc_cidr_block  = local.vpc_cidr_block
+  public_subnets  = local.public_subnets
+  private_subnets = local.private_subnets
 }
 
 module "blog" {
@@ -46,6 +59,14 @@ output "public_subnet_1a" {
 
 output "public_subnet_ids" {
   value = [for value in module.base.public_subnets : value.id]
+}
+
+output "private_subnet_1a" {
+  value = module.base.private_subnets["private-1a"].id
+}
+
+output "private_subnet_ids" {
+  value = [for value in module.base.private_subnets : value.id]
 }
 
 output "ec2_public_ip" {

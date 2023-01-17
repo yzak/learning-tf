@@ -14,3 +14,11 @@ variable "public_subnets" {
     az   = string
   }))
 }
+
+variable "private_subnets" {
+  type = map(object({
+    name = string
+    cidr = string
+    az   = string
+  }))
+}

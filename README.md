@@ -21,20 +21,11 @@
 ![image](/img/learning-tf.png)
 
 ### 今回やること
-- `.gitignore`
-  - 後ほど作成するキーペアをgit管理外にします
-- `modules/blog/main.tf`
-  - `blog`サービスの各リソースを作成する定義を記載します
-  - `variable.tf`,`output.tf`も記載します
-- `modules/blog/ec2/main.tf`
-  - `blog`サービスのEC2リソースを作成する定義を記載します
+- `modules/base/main.tf`
+  - `base`サービスにプライベートサブネットの各リソースを作成する定義を記載します
   - `variable.tf`,`output.tf`も記載します
 - `environments/dev/main.tf`
-  - `blog`サービスとして作成したモジュールを呼び出します
-- `environments/dev/provider.tf`
-  - 自宅IPを取得するためのプロバイダ`http`を追加定義します
-- `environments/prd/main.tf`
-  - 今後は`dev`環境に対して構築していくため、`prd`は対象外とします
+  - `base`サービスにプライベートサブネットの情報を追加して呼び出します
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -46,17 +37,10 @@
 ## 3. Terraformを実行する
 - 画面下部のターミナルで、コマンドを実行する
 - `cd environments/dev`
-- EC2に登録するキーペアを事前に作成する
-  - `ssh-keygen -t rsa -b 4096 -f myproject-dev-ec2.pem`
-    - パスフレーズは、未入力でENTERキーを押す
 - `terraform plan`
 - `terraform apply`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
-- EC2にSSH接続できることを確認する(Teratermなど)
-  - `ssh -i myproject-dev-ec2.pem ec2-user@xxx.xxx(EC2のパブリックIP)`
-  - `exit`
-- Cloud9のターミナルに戻り
 - `terraform destroy`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが消えたことを確認する
