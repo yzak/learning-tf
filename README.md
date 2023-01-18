@@ -14,7 +14,7 @@
 
 ### 今回やること
 - `main.tf`
-  - PublicSubnetを作っている箇所を`foreach`を用いて管理しやすくする
+  - PublicSubnetを作っている箇所を`[foreach](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each)`を用いて管理しやすくする
   - CIDRブロックをlocalsに定義したので、VPCのCIDRブロックも同じく定義する
 
 ## 1. Cloud9を起動する
