@@ -15,8 +15,8 @@
   - バージョン情報を、[versions.tf](./versions.tf)に移動
   - プロバイダ情報を、[provider.tf](./provider.tf)に移動
   - [AWS Provider Document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)を見ながら
-    - パブリックサブネットの構築を追加
-    - パブリックサブネットが利用するルートテーブルの構築を追加
+    - パブリックサブネットの構築を追加([サブネット定義](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet))
+    - パブリックサブネットが利用するルートテーブルの構築を追加([ルートテーブル定義](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) [関連付け定義](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association))
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
