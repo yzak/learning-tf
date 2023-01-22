@@ -11,14 +11,6 @@ variable "elb_host_name" {
   type = string
 }
 
-variable "elb_dns_name" {
-  type = string
-}
-
-variable "elb_zone_id" {
-  type = string
-}
-
-variable "domain_validation_options" {
-  type = set(any)
+variable "validation_record_fqdns" {
+  type = list(string)
 }

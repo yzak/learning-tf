@@ -18,6 +18,15 @@ resource "aws_security_group" "main" {
       "${chomp(data.http.myip.body)}/32" # https://developer.hashicorp.com/terraform/language/functions/chomp
     ]
   }
+  # インバウンドはHTTPSを許可
+  ingress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+    cidr_blocks = [
+      "${chomp(data.http.myip.body)}/32" # https://developer.hashicorp.com/terraform/language/functions/chomp
+    ]
+  }
 
   # アウトバウンドは全て許可
   egress {
@@ -59,11 +68,13 @@ resource "aws_alb_target_group_attachment" "main" {
   port             = 80
 }
 
-# ELB Listener
-resource "aws_alb_listener" "main" {
+# ELB Listener HTTPS
+resource "aws_alb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = "443"
+  protocol          = "HTTPS"
+  certificate_arn   = var.acm_arn
+
 
   default_action {
     target_group_arn = aws_lb_target_group.main.arn
@@ -71,3 +82,20 @@ resource "aws_alb_listener" "main" {
   }
 }
 
+#HTTPリスナー
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  # HTTP -> HTTPSへリダイレクト
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}

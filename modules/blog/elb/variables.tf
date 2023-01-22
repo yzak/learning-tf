@@ -18,3 +18,6 @@ variable "instance_id" {
   type = string
 }
 
+variable "acm_arn" {
+  type = string
+}

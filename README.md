@@ -19,19 +19,21 @@
 
 ## 作るもの
 ![image](/img/learning-tf.png)
+※外部からの通信をHTTPS化します
 
 ### 今回やること
-- 自身でドメインを取得しRoute53に登録します
-  - Route53でドメイン購入([公式を参考](https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/domain-register.html#domain-register-procedure))、または、他のドメインサービスで購入します
-  - 他サービスで購入した場合は、購入したドメインをRoute53に紐づける必要があります(`「ドメインを購入したサービス名 Route53」`などで検索してみるとやり方が見つかると思います)
+- `modules/blog/acm/main.tf`
+  - `blog`サービスの`ACM`にSSL証明書の定義を記載します
+  - `variable.tf`,`output.tf`も記載します
+- `modules/blog/elb/main.tf`
+  - `blog`サービスの`ELB`にHTTPSのインバウンドを許可し、SSL証明書を定義します
+  - `variable.tf`も記載します
 - `modules/blog/route53/main.tf`
-  - `blog`サービスの`Route53`にドメイン定義を記載します
+  - `blog`サービスの`ACM`の検証用DNSレコードを記載します
   - `variable.tf`,`output.tf`も記載します
 - `modules/blog/main.tf`
-  - `blog`サービスに`Route53`を構築する定義を記載します
-  - `variable.tf`,`output.tf`も記載します
-- `environments/dev/main.tf`
-  - `blog`サービスに設定するドメイン情報を定義します
+  - `blog`サービスの[ドメインを定義](./environments/dev/main.tf#L29)します
+  - `blog`サービスに`ACM`を構築する定義を記載します
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -50,7 +52,9 @@
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
 - [前回同様](https://github.com/yzak/learning-tf/tree/10-elb#3-terraform%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%99%E3%82%8B)に、EC2にSSH接続し、WordPressをインストールします
 - ターゲットグループを確認し、EC2インスタンスが`healthy`になっていることを確認
-- ブラウザで、`fqdn`で出力されたURLへアクセス
+- ブラウザで、https://`fqdn`で出力されたURLへアクセス
+- WordPressはデフォルトではHTTPSに対応していないため、画面が崩れます
+  - WordPressのHTTPS化には`WordPress HTTPS化`などでWeb検索し、プラグインなどを導入することでできます（ここでは割愛します）
 - [前回同様](https://github.com/yzak/learning-tf/tree/10-elb#3-terraform%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%99%E3%82%8B)に、WordPressの初期設定を行います
 - サンプルページが表示されること
 - Cloud9のターミナルに戻り
