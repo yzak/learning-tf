@@ -5,3 +5,6 @@ output "ec2_public_ip" {
 output "rds_address" {
   value = module.rds.address
 }
+output "elb_dns_name" {
+  value = module.elb.dns_name
+}

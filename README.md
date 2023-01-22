@@ -19,20 +19,21 @@
 
 ## 作るもの
 ![image](/img/learning-tf.png)
-- ※RDS構築時にAZを指定していないため、1a または 1cのどちらかに配置されますが、どちらでも問題ありません
 
 ### 今回やること
 - `modules/blog/ec2/output.tf`
-  - `blog`サービスの`rds`のインバウンド通信をEC2に限定するため、必要な情報を返却します
-- `modules/blog/rds/main.tf`
-  - `blog`サービスに`rds`に関する各リソースを作成する定義を記載します
+  - `blog`サービスの`TargetGroup`にEC2インスタンスを所属させるため、必要な情報を返却します
+- `modules/blog/elb/main.tf`
+  - `blog`サービスに`elb`に関する各リソースを作成する定義を記載します
   - `variable.tf`,`output.tf`も記載します
 - `modules/blog/main.tf`
-  - `blog`サービスに`rds`を構築する定義を記載します
-  - `variable.tf`,`output.tf`も記載します
+  - `blog`サービスに`elb`を構築する定義を記載します
+  - `output.tf`も記載します
+- `modules/blog/ec2/main.tf`
+  - `blog`サービスの`ec2`のセキュリティグループに、ELBからのインバウンドを許可する定義を記載します
+  - `variable.tf`も記載します
 - `environments/dev/main.tf`
-  - `blog`サービスにプライベートサブネットの情報を追加して呼び出します
-  - `blog`サービスで作成したRDSのアドレス情報を出力します
+  - `blog`サービスで作成したELBのDNS名を出力します
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -51,12 +52,45 @@
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
 - EC2にSSH接続できることを確認する(Teratermなど)
   - `ssh -i myproject-dev-ec2.pem ec2-user@xxx.xxx(EC2のパブリックIP)`
-  - mysqlをインストールし、RDSへ接続します
-  - `sudo su -`
-  - `yum install -y mysql`
-  - `mysql -u wordpress -pwordpress -h xxx.xxxx(RDSのエンドポイント) `
-  - `exit`
-  - `exit`
+  - wordpressをインストールします
+    ```
+    sudo su - 
+    yum -y update
+
+    amazon-linux-extras install php7.2 -y
+    yum -y install mysql httpd php-mbstring php-xml gd php-gd
+
+    systemctl enable httpd.service
+    systemctl start httpd.service
+
+    wget http://ja.wordpress.org/latest-ja.tar.gz ~/
+    tar zxvf ~/latest-ja.tar.gz
+    cp -r ~/wordpress/* /var/www/html/
+    chown apache:apache -R /var/www/html
+    echo "ok" >> /var/www/html/healthcheck.html
+    exit
+    exit
+    ```
+- ターゲットグループを確認し、EC2インスタンスが`healthy`になっていることを確認
+- ブラウザで、`elb_dns_name`で出力されたURLへアクセス
+  - 以下でwordpressを初期設定します
+    | 項目名 | 値 |
+    | -- | -- |
+    | データベース名 | wordpress |
+    | ユーザー名 | wordpress |
+    | パスワード | wordpress |
+    | データベースのホスト名 | `rds_address`の出力値 |
+    | テーブル接頭辞	 | wp_ |
+  - インストール実行後、以下の必要情報を設定します
+    | 項目名 | 値 |
+    | -- | -- |
+    | サイトのタイトル | myblog |
+    | ユーザー名 | 任意の値 |
+    | パスワード | 任意の値 |
+    | メールアドレス | ご自身のメールアドレス |
+    | 検索エンジンでの表示 | チェックON |
+  - 登録したユーザー名、パスワードでログインし、画面左上の`myblog`の`サイトを表示`を選択
+  - サンプルページが表示されること
 - Cloud9のターミナルに戻り
 - `terraform destroy`
   - `yes`を入力する

@@ -77,3 +77,7 @@ output "ec2_public_ip" {
 output "rds_address" {
   value = module.blog.rds_address
 }
+
+output "elb_dns_name" {
+  value = module.blog.elb_dns_name
+}

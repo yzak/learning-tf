@@ -6,3 +6,7 @@ output "public_ip" {
 output "sgr_id" {
   value = aws_security_group.main.id
 }
+
+output "instance_id" {
+  value = aws_instance.main.id
+}

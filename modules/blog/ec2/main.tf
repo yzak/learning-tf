@@ -35,6 +35,17 @@ resource "aws_security_group_rule" "inboud_ssh" {
   description = "ssh"
 }
 
+# ELBからのインバウンド許可
+resource "aws_security_group_rule" "inboud_http" {
+  security_group_id        = aws_security_group.main.id
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = var.elb_sgr_id
+  description              = "http"
+}
+
 # KeyPairを登録
 resource "aws_key_pair" "main" {
   key_name   = "${var.prefix}-ec2"

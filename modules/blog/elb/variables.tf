@@ -7,10 +7,14 @@ variable "vpc_id" {
   type = string
 }
 
-variable "subnet_id" {
+variable "public_subnets" {
+  type = map(object({
+    id  = string
+    arn = string
+  }))
+}
+
+variable "instance_id" {
   type = string
 }
 
-variable "elb_sgr_id" {
-  type = string
-}
