@@ -19,7 +19,7 @@
 
 ### やってみよう
 - Web検索を駆使して色々とやってみよう
-- [tfstateをS3に保管してみよう
+- tfstateをS3に保管してみよう
   - https://developer.hashicorp.com/terraform/language/settings/backends/s3
 - 構成図を書いてみよう
   - `draw.io aws 構成図`などで検索してみよう
