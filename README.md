@@ -31,6 +31,7 @@
   - `blog`サービスに`Route53`を構築する定義を記載します
   - `variable.tf`,`output.tf`も記載します
 - `environments/dev/main.tf`
+  - `blog`サービスの[ドメインを定義](https://github.com/yzak/learning-tf/blob/e3cb982e0efffec1dc631b1fd6e9d5f03fbfff88/environments/dev/main.tf#L29)します
   - `blog`サービスに設定するドメイン情報を定義します
 
 ## 1. Cloud9を起動する
