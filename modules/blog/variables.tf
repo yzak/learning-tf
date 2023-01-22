@@ -20,3 +20,11 @@ variable "private_subnets" {
     arn = string
   }))
 }
+
+variable "host_zone_name" {
+  type = string
+}
+
+variable "elb_host_name" {
+  type = string
+}

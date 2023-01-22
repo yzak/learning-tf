@@ -21,3 +21,12 @@ module "elb" {
   public_subnets = var.public_subnets
   instance_id    = module.ec2.instance_id
 }
+
+module "route53" {
+  source         = "./route53"
+  prefix         = var.prefix
+  host_zone_name = var.host_zone_name
+  elb_host_name  = var.elb_host_name
+  elb_dns_name   = module.elb.dns_name
+  elb_zone_id    = module.elb.zone_id
+}

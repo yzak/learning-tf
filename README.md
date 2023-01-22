@@ -21,19 +21,17 @@
 ![image](/img/learning-tf.png)
 
 ### 今回やること
-- `modules/blog/ec2/output.tf`
-  - `blog`サービスの`TargetGroup`にEC2インスタンスを所属させるため、必要な情報を返却します
-- `modules/blog/elb/main.tf`
-  - `blog`サービスに`elb`に関する各リソースを作成する定義を記載します
+- 自身でドメインを取得しRoute53に登録します
+  - Route53でドメイン購入([公式を参考](https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/domain-register.html#domain-register-procedure))、または、他のドメインサービスで購入します
+  - 他サービスで購入した場合は、購入したドメインをRoute53に紐づける必要があります(`「ドメインを購入したサービス名 Route53」`などで検索してみるとやり方が見つかると思います)
+- `modules/blog/route53/main.tf`
+  - `blog`サービスの`Route53`にドメイン定義を記載します
   - `variable.tf`,`output.tf`も記載します
 - `modules/blog/main.tf`
-  - `blog`サービスに`elb`を構築する定義を記載します
-  - `output.tf`も記載します
-- `modules/blog/ec2/main.tf`
-  - `blog`サービスの`ec2`のセキュリティグループに、ELBからのインバウンドを許可する定義を記載します
-  - `variable.tf`も記載します
+  - `blog`サービスに`Route53`を構築する定義を記載します
+  - `variable.tf`,`output.tf`も記載します
 - `environments/dev/main.tf`
-  - `blog`サービスで作成したELBのDNS名を出力します
+  - `blog`サービスに設定するドメイン情報を定義します
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -50,47 +48,11 @@
   - `yes`を入力する
   - RDSの構築は5分ほどかかります
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
-- EC2にSSH接続できることを確認する(Teratermなど)
-  - `ssh -i myproject-dev-ec2.pem ec2-user@xxx.xxx(EC2のパブリックIP)`
-  - wordpressをインストールします
-    ```
-    sudo su - 
-    yum -y update
-
-    amazon-linux-extras install php7.2 -y
-    yum -y install mysql httpd php-mbstring php-xml gd php-gd
-
-    systemctl enable httpd.service
-    systemctl start httpd.service
-
-    wget http://ja.wordpress.org/latest-ja.tar.gz ~/
-    tar zxvf ~/latest-ja.tar.gz
-    cp -r ~/wordpress/* /var/www/html/
-    chown apache:apache -R /var/www/html
-    echo "ok" >> /var/www/html/healthcheck.html
-    exit
-    exit
-    ```
+- [前回同様](https://github.com/yzak/learning-tf/tree/10-elb#3-terraform%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%99%E3%82%8B)に、EC2にSSH接続し、WordPressをインストールします
 - ターゲットグループを確認し、EC2インスタンスが`healthy`になっていることを確認
-- ブラウザで、`elb_dns_name`で出力されたURLへアクセス
-  - 以下でwordpressを初期設定します
-    | 項目名 | 値 |
-    | -- | -- |
-    | データベース名 | wordpress |
-    | ユーザー名 | wordpress |
-    | パスワード | wordpress |
-    | データベースのホスト名 | `rds_address`の出力値 |
-    | テーブル接頭辞	 | wp_ |
-  - インストール実行後、以下の必要情報を設定します
-    | 項目名 | 値 |
-    | -- | -- |
-    | サイトのタイトル | myblog |
-    | ユーザー名 | 任意の値 |
-    | パスワード | 任意の値 |
-    | メールアドレス | ご自身のメールアドレス |
-    | 検索エンジンでの表示 | チェックON |
-  - 登録したユーザー名、パスワードでログインし、画面左上の`myblog`の`サイトを表示`を選択
-  - サンプルページが表示されること
+- ブラウザで、`fqdn`で出力されたURLへアクセス
+- [前回同様](https://github.com/yzak/learning-tf/tree/10-elb#3-terraform%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%99%E3%82%8B)に、WordPressの初期設定を行います
+- サンプルページが表示されること
 - Cloud9のターミナルに戻り
 - `terraform destroy`
   - `yes`を入力する

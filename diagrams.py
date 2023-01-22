@@ -2,11 +2,13 @@ from diagrams import Cluster, Diagram, Edge
 from diagrams.aws.network import InternetGateway
 from diagrams.aws.network import RouteTable
 from diagrams.aws.network import ALB
+from diagrams.aws.network import Route53
 from diagrams.aws.compute import EC2
 from diagrams.aws.database import RDS
 
 with Diagram("learning-tf", show=False, direction="TB"):
     with Cluster("AWS for development"):
+        r53 = Route53("Route53")
         with Cluster("Region ap-northeast-1"):
             with Cluster("VPC 10.0.0.0/21"):
                 igw = InternetGateway("InternetGateway")

@@ -25,7 +25,9 @@ locals {
       az   = "ap-northeast-1c"
     },
   }
-  prefix = "${data.aws_default_tags._.tags.Project}-${data.aws_default_tags._.tags.Env}"
+  prefix         = "${data.aws_default_tags._.tags.Project}-${data.aws_default_tags._.tags.Env}"
+  host_zone_name = "R53_HOST_ZONE_NAME" # Route53のホストゾーン名
+  elb_host_name  = "elb.${local.host_zone_name}"
 }
 
 # モジュールの呼び出し
@@ -46,6 +48,8 @@ module "blog" {
   vpc_id          = module.base.vpc_id
   public_subnets  = module.base.public_subnets
   private_subnets = module.base.private_subnets
+  host_zone_name  = local.host_zone_name
+  elb_host_name   = local.elb_host_name
 }
 
 # モジュールの呼び出し結果の値を表示してみる
@@ -80,4 +84,8 @@ output "rds_address" {
 
 output "elb_dns_name" {
   value = module.blog.elb_dns_name
+}
+
+output "fqdn" {
+  value = module.blog.fqdn
 }

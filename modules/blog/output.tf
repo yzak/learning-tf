@@ -8,3 +8,6 @@ output "rds_address" {
 output "elb_dns_name" {
   value = module.elb.dns_name
 }
+output "fqdn" {
+  value = module.route53.fqdn
+}
