@@ -38,6 +38,7 @@
 ## 3. Terraformを実行する
 - 画面下部のターミナルで、コマンドを実行する
 - `cd environments/dev`
+- `terraform init`
 - `terraform plan`
 - `terraform apply`
   - `yes`を入力する
@@ -45,5 +46,5 @@
 - `terraform destroy`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが消えたことを確認する
+- `cd ../../`して、ディレクトリを戻り
 - `cd environments/prd`して、同じコマンドを実行
-
