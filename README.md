@@ -45,4 +45,5 @@
 - `terraform destroy`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが消えたことを確認する
+- `cd ../../`して、ディレクトリを戻り
 - `cd environments/prd`して、同じコマンドを実行
