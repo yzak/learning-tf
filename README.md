@@ -53,10 +53,10 @@
 - `terraform apply`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
-- EC2にSSH接続できることを確認する(Teratermなど)
+- EC2にSSH接続できることを確認する
   - `ssh -i myproject-dev-ec2.pem ec2-user@xxx.xxx(EC2のパブリックIP)`
   - `exit`
-- Cloud9のターミナルに戻り
+- 確認後、作成したリソースを削除するコマンドを実行する
 - `terraform destroy`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが消えたことを確認する
