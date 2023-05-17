@@ -20,21 +20,9 @@
 ## 作るもの
 ![image](/img/learning-tf.png)
 
-### 今回やること
-- `.gitignore`
-  - 後ほど作成するキーペアをgit管理外にします
-- `modules/blog/main.tf`
-  - `blog`サービスの各リソースを作成する定義を記載します
-  - `variable.tf`,`output.tf`も記載します
-- `modules/blog/ec2/main.tf`
-  - `blog`サービスのEC2リソースを作成する定義を記載します
-  - `variable.tf`,`output.tf`も記載します
-- `environments/dev/main.tf`
-  - `blog`サービスとして作成したモジュールを呼び出します
-- `environments/dev/provider.tf`
-  - 自宅IPを取得するためのプロバイダ`http`を追加定義します
-- `environments/prd/main.tf`
-  - 今後は`dev`環境に対して構築していくため、`prd`は対象外とします
+### トライ1
+- 上記の`作るもの`の構成を`environments/dev/main.tf`の1ファイルに書いて作ってみよう
+- 各リソースの属性はお任せします
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -60,4 +48,9 @@
 - `terraform destroy`
   - `yes`を入力する
 - AWSマネジメントコンソールで、AWSリソースが消えたことを確認する
+
+## トライ2
+- `environments/dev/main.tf`に、以下を実装してみよう（各リソースの属性はお任せします）
+- S3バケットを追加してみよう
+- EC2からS3バケットにAWS CLIを使ってアクセスできるように、EC2にIAMロールを付与してみよう
 
