@@ -30,7 +30,7 @@ resource "aws_security_group_rule" "inboud_ssh" {
   to_port           = 22
   protocol          = "tcp"
   cidr_blocks = [
-    "${chomp(data.http.myip.body)}/32" # https://developer.hashicorp.com/terraform/language/functions/chomp
+    "${chomp(data.http.myip.response_body)}/32" # https://developer.hashicorp.com/terraform/language/functions/chomp
   ]
   description = "ssh"
 }
