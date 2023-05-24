@@ -1,8 +1,3 @@
-# my ip 取得
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com/"
-}
-
 # Security Group ELB
 resource "aws_security_group" "main" {
   name        = "${var.prefix}-elb-sg"
@@ -11,12 +6,10 @@ resource "aws_security_group" "main" {
 
   # インバウンドはHTTPを許可
   ingress {
-    from_port = 80
-    to_port   = 80
-    protocol  = "tcp"
-    cidr_blocks = [
-      "${chomp(data.http.myip.body)}/32" # https://developer.hashicorp.com/terraform/language/functions/chomp
-    ]
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # アウトバウンドは全て許可
