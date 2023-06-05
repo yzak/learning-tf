@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3   
 
       - name: confiture AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-region: 'ap-northeast-1'
           role-to-assume:  'arn:aws:iam::220689308637:role/oidc-identity'
