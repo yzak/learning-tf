@@ -16,29 +16,23 @@ jobs:
         shell: bash
     steps:
       - name: Checkout
-        uses: actions/checkout@v3   
-
+        uses: actions/checkout@v3
       - name: confiture AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-region: 'ap-northeast-1'
-          role-to-assume:  'arn:aws:iam::220689308637:role/oidc-identity'
-
+          aws-region: ap-northeast-1
+          role-to-assume: arn:aws:iam::220689308637:role/oidc-identity
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
-
       - name: Exec Terraform init
         run: |
           terraform init
-
       - name: Exec Terraform fmt check
         run: |
           terraform fmt -recursive -check
-
       - name: Exec Terraform validate
         run: |
           terraform validate
-
       - name: Exec Terraform plan
         run: |
           terraform plan
