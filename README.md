@@ -19,21 +19,32 @@
 
 ## 作るもの
 ![image](/img/learning-tf.png)
-※外部からの通信をHTTPS化します
+- EC2はオートスケーリングに対応します
+- WordPressを冗長構成で動作できるようにインストール先をEFSにします
 
 ### 今回やること
-- `modules/blog/acm/main.tf`
-  - `blog`サービスの`ACM`にSSL証明書の定義を記載します
+- `environments/dev/main.tf`
+  - オートスケーリングでEC2を作成するようになるため、`output`からec2のipを削除します
+- `modules/blog/output.tf`
+  - 上記同様に、outputからpublic_ipを削除します
+- `modules/blog/ec2/main.tf`
+  - オートスケーリングにするため`aws_instance`を削除し、起動テンプレート`aws_launch_template`に変更します
+  - `aws_launch_template`では、ユーザーデータを用いてEC2の初期化を行うため、`modules/blog/ec2/tpl/user_data.sh`を実行するようにしている
+- `modules/blog/ec2/variables.tf`
+  - `aws_launch_template`のユーザーデータを用いて、`efs`をマウントするため、efsのidを追加します
+  - 同様にユーザーデータで、WordPressのDB接続情報を設定するため、rdsの接続先を追加します
+- `modules/blog/ec2/output.tf`
+  - outputからpublic_ipを削除します
+  - EC2のinstance_idではなく、起動テンプレートIDを返し、これをオートスケーリングで利用するようにします
+- `modules/blog/ec2/tpl/user_data.sh`
+  - オートスケーリング時のユーザーデータで実行する内容を記載します
+- `modules/blog/efs/main.tf`
+  - `blog`サービス(WordPress)をefs上に配置するために作成します
   - `variable.tf`,`output.tf`も記載します
 - `modules/blog/elb/main.tf`
-  - `blog`サービスの`ELB`にHTTPSのインバウンドを許可し、SSL証明書を定義します
-  - `variable.tf`も記載します
-- `modules/blog/route53/main.tf`
-  - `blog`サービスの`ACM`の検証用DNSレコードを記載します
-  - `variable.tf`,`output.tf`も記載します
-- `modules/blog/main.tf`
-  - `blog`サービスの[ドメインを定義](./environments/dev/main.tf#L29)します
-  - `blog`サービスに`ACM`を構築する定義を記載します
+  - `blog`サービスの`TargetGroup`からEC2インスタンスの定義を削除し、代わりにオートスケーリングの設定を追加します
+  - `TargetGroup`のヘルスチェック先を、`/healthcheck.html`から、`/wp-includes/images/blank.gif`に変更します
+  - `variable.tf`からEC2のインスタンスIDを削除し、代わりに`aws_launch_template`のidに変更します
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -50,12 +61,10 @@
   - `yes`を入力する
   - RDSの構築は5分ほどかかります
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
-- [前回同様](https://github.com/yzak/learning-tf/tree/10-elb#3-terraform%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%99%E3%82%8B)に、EC2にSSH接続し、WordPressをインストールします
-- ターゲットグループを確認し、EC2インスタンスが`healthy`になっていることを確認
+- ターゲットグループを確認し、EC2インスタンスがオートスケーリングで2台存在することを確認
+-  5分ほど経過後に、`healthy`になっていることを確認(初回はWordPress本体をefsにコピーするなど時間を要します)
 - ブラウザで、https://`fqdn`で出力されたURLへアクセス
-- WordPressはデフォルトではHTTPSに対応していないため、画面が崩れます
-  - WordPressのHTTPS化には`WordPress HTTPS化`などでWeb検索し、プラグインなどを導入することでできます（ここでは割愛します）
-- [前回同様](https://github.com/yzak/learning-tf/tree/10-elb#3-terraform%E3%82%92%E5%AE%9F%E8%A1%8C%E3%81%99%E3%82%8B)に、WordPressの初期設定を行います
+- ブラウザの指示に沿って、WordPressの初期設定を行います
 - サンプルページが表示されること
 - Cloud9のターミナルに戻り
 - `terraform destroy`

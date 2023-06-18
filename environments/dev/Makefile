@@ -1,7 +1,7 @@
 export GODEBUG=asyncpreemptoff=1
 
 init:
-	terraform init
+	terraform init --upgrade
 
 plan: init
 	terraform plan

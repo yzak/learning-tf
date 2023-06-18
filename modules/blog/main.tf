@@ -1,9 +1,19 @@
+module "efs" {
+  source          = "./efs"
+  prefix          = var.prefix
+  vpc_id          = var.vpc_id
+  private_subnets = var.private_subnets
+  ec2_sgr_id      = module.ec2.sgr_id
+}
+
 module "ec2" {
   source     = "./ec2"
   prefix     = var.prefix
   vpc_id     = var.vpc_id
   subnet_id  = var.public_subnets["public-1a"].id
+  efs_id     = module.efs.efs_id
   elb_sgr_id = module.elb.sgr_id
+  db_host    = module.rds.address
 }
 
 module "rds" {
@@ -15,12 +25,12 @@ module "rds" {
 }
 
 module "elb" {
-  source         = "./elb"
-  prefix         = var.prefix
-  vpc_id         = var.vpc_id
-  public_subnets = var.public_subnets
-  instance_id    = module.ec2.instance_id
-  acm_arn        = module.acm.arn
+  source             = "./elb"
+  prefix             = var.prefix
+  vpc_id             = var.vpc_id
+  public_subnets     = var.public_subnets
+  acm_arn            = module.acm.arn
+  launch_template_id = module.ec2.launch_template_id
 }
 
 module "route53" {

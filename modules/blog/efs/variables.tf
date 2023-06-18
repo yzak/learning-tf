@@ -7,17 +7,14 @@ variable "vpc_id" {
   type = string
 }
 
-variable "public_subnets" {
+variable "private_subnets" {
   type = map(object({
     id  = string
     arn = string
   }))
 }
 
-variable "launch_template_id" {
+variable "ec2_sgr_id" {
   type = string
 }
 
-variable "acm_arn" {
-  type = string
-}

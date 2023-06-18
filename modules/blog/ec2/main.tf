@@ -52,16 +52,22 @@ resource "aws_key_pair" "main" {
   public_key = file("myproject-dev-ec2.pem.pub")
 }
 
-# EC2
-resource "aws_instance" "main" {
-  ami                         = "ami-0bba69335379e17f8"
-  vpc_security_group_ids      = [aws_security_group.main.id]
-  instance_type               = "t2.micro"
-  subnet_id                   = var.subnet_id
-  associate_public_ip_address = true
-  key_name                    = aws_key_pair.main.key_name
+resource "aws_launch_template" "main" {
+  name          = "${var.prefix}-launch-template"
+  image_id      = "ami-0bba69335379e17f8"
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.main.key_name
+  network_interfaces {
+    associate_public_ip_address = true
+    security_groups             = [aws_security_group.main.id]
+  }
+  user_data = base64encode(templatefile("${path.module}/tpl/user_data.sh",
+    {
+      efs_id  = var.efs_id
+      db_host = var.db_host
+    }
+  ))
   tags = {
     "Name" = "${var.prefix}-ec2"
   }
 }
-

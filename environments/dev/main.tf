@@ -74,10 +74,6 @@ output "private_subnet_ids" {
   value = [for value in module.base.private_subnets : value.id]
 }
 
-output "ec2_public_ip" {
-  value = module.blog.ec2_public_ip
-}
-
 output "rds_address" {
   value = module.blog.rds_address
 }

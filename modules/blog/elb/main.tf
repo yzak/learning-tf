@@ -48,16 +48,11 @@ resource "aws_lb_target_group" "main" {
   protocol = "HTTP"
   vpc_id   = var.vpc_id
   health_check {
-    path = "/healthcheck.html"
+    path = "/wp-includes/images/blank.gif"
   }
 }
 
-# Target Group Attachment
-resource "aws_alb_target_group_attachment" "main" {
-  target_group_arn = aws_lb_target_group.main.arn
-  target_id        = var.instance_id
-  port             = 80
-}
+
 
 # ELB Listener HTTPS
 resource "aws_alb_listener" "https" {
@@ -88,5 +83,26 @@ resource "aws_lb_listener" "http" {
       protocol    = "HTTPS"
       status_code = "HTTP_301"
     }
+  }
+}
+
+# オートスケーリンググループ
+resource "aws_autoscaling_group" "main" {
+  name                = "${var.prefix}-autoscaling-group"
+  max_size            = 4
+  min_size            = 2
+  desired_capacity    = 2
+  vpc_zone_identifier = [for value in var.public_subnets : value.id]
+
+  launch_template {
+    id      = var.launch_template_id
+    version = "$Latest"
+  }
+
+  target_group_arns = [aws_lb_target_group.main.arn]
+  tag {
+    key                 = "Name"
+    value               = "${var.prefix}-autoscaling-instance"
+    propagate_at_launch = true # 起動したインスタンスに付与するタグ
   }
 }

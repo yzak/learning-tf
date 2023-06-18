@@ -14,3 +14,11 @@ variable "subnet_id" {
 variable "elb_sgr_id" {
   type = string
 }
+
+variable "efs_id" {
+  type = string
+}
+
+variable "db_host" {
+  type = string
+}
