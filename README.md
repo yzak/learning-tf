@@ -19,32 +19,26 @@
 
 ## 作るもの
 ![image](/img/learning-tf.png)
-- EC2はオートスケーリングに対応します
-- WordPressを冗長構成で動作できるようにインストール先をEFSにします
+- CloudFrontを利用します
 
 ### 今回やること
 - `environments/dev/main.tf`
-  - オートスケーリングでEC2を作成するようになるため、`output`からec2のipを削除します
-- `modules/blog/output.tf`
-  - 上記同様に、outputからpublic_ipを削除します
-- `modules/blog/ec2/main.tf`
-  - オートスケーリングにするため`aws_instance`を削除し、起動テンプレート`aws_launch_template`に変更します
-  - `aws_launch_template`では、ユーザーデータを用いてEC2の初期化を行うため、`modules/blog/ec2/tpl/user_data.sh`を実行するようにしている
+  - `cdn_host_name`を追加し、CloudFront(CDN)のドメインを設定します
+  - 関連して、ELB,CloudFrontのFQDNを`output`に出力しています
+  - CloudFrontはグローバルに設置するため、CloudFrontのSSL証明書(ACM)はバージニア北部で登録する必要があるため、`provider`に追加します
+- `modules/blog/main.tf`
+  - ユーザーデータで作成する際に、CloudFront経由のHTTPSアクセスで動作させるために、CloudFrontのドメインの設定を追加します
+  - CloudFront,CloudFrontのSSL証明書,Route53の登録を追加します
+- `modules/blog/cloudfront/main.tf`
+  - CloudFront+ELBの構成dえWordpressを提供するための定義を追加します
+  - 関連して必要な情報を、`variable.tf`,`output.tf`に記載します
+- `modules/blog/ec2/tpl/user_data.sh`
+  - WordPressの初期構築時のドメインをCloudFrontに統一させるための設定を追加します
 - `modules/blog/ec2/variables.tf`
   - `aws_launch_template`のユーザーデータを用いて、`efs`をマウントするため、efsのidを追加します
   - 同様にユーザーデータで、WordPressのDB接続情報を設定するため、rdsの接続先を追加します
-- `modules/blog/ec2/output.tf`
-  - outputからpublic_ipを削除します
-  - EC2のinstance_idではなく、起動テンプレートIDを返し、これをオートスケーリングで利用するようにします
-- `modules/blog/ec2/tpl/user_data.sh`
-  - オートスケーリング時のユーザーデータで実行する内容を記載します
-- `modules/blog/efs/main.tf`
-  - `blog`サービス(WordPress)をefs上に配置するために作成します
-  - `variable.tf`,`output.tf`も記載します
 - `modules/blog/elb/main.tf`
-  - `blog`サービスの`TargetGroup`からEC2インスタンスの定義を削除し、代わりにオートスケーリングの設定を追加します
-  - `TargetGroup`のヘルスチェック先を、`/healthcheck.html`から、`/wp-includes/images/blank.gif`に変更します
-  - `variable.tf`からEC2のインスタンスIDを削除し、代わりに`aws_launch_template`のidに変更します
+  - CloudFront経由のリクエストのみを処理するように、CloudFrontで定めたHTTPヘッダがある場合のみEC2に転送し、それ以外は403を返すように設定します
 
 ## 1. Cloud9を起動する
 - AWSマネジメントコンソールで、cloud9と入力し、cloud9を開く
@@ -60,10 +54,10 @@
 - `terraform apply`
   - `yes`を入力する
   - RDSの構築は5分ほどかかります
+  - CloudFrontも今回作成するため、さらに10分ほど待つ必要があります
+  - ターゲットグループでオートスケーリングのEC2がhealthyになるまで待機します
 - AWSマネジメントコンソールで、AWSリソースが作成されていることを確認する
-- ターゲットグループを確認し、EC2インスタンスがオートスケーリングで2台存在することを確認
--  5分ほど経過後に、`healthy`になっていることを確認(初回はWordPress本体をefsにコピーするなど時間を要します)
-- ブラウザで、https://`fqdn`で出力されたURLへアクセス
+- ブラウザで、https://`cdn_fqdn`へアクセスしWordPressのインストールを行います
 - ブラウザの指示に沿って、WordPressの初期設定を行います
 - サンプルページが表示されること
 - Cloud9のターミナルに戻り

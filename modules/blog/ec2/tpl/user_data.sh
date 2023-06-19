@@ -26,7 +26,7 @@ if [ ! -e /var/www/html/wp-config.php ]; then
   sed -i "s/username_here/wordpress/" /var/www/html/wp-config.php
   sed -i "s/password_here/wordpress/" /var/www/html/wp-config.php
   sed -i "s/localhost/${db_host}/" /var/www/html/wp-config.php
-  sed -i "s/define( 'WP_DEBUG', false );/define( 'WP_DEBUG', false );\$_SERVER['HTTPS'] = 'on';/" /var/www/html/wp-config.php
+  sed -i "s/define( 'WP_DEBUG', false );/define( 'WP_DEBUG', false );\$_SERVER['HTTPS'] = 'on';\$_SERVER['HTTP_HOST'] = 'yasuo1979.com';/" /var/www/html/wp-config.php
 fi
 
 #ファイルやディレクトリのユーザやグループを変更

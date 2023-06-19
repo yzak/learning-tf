@@ -7,15 +7,15 @@ variable "host_zone_name" {
   type = string
 }
 
-variable "elb_host_name" {
+variable "host_name" {
   type = string
 }
 
-variable "elb_dns_name" {
+variable "dns_name" {
   type = string
 }
 
-variable "elb_zone_id" {
+variable "zone_id" {
   type = string
 }
 

@@ -52,8 +52,6 @@ resource "aws_lb_target_group" "main" {
   }
 }
 
-
-
 # ELB Listener HTTPS
 resource "aws_alb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
@@ -61,10 +59,30 @@ resource "aws_alb_listener" "https" {
   protocol          = "HTTPS"
   certificate_arn   = var.acm_arn
 
-
   default_action {
-    target_group_arn = aws_lb_target_group.main.arn
+    type = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      status_code  = 403
+      message_body = "Forbidden"
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "tg" {
+  listener_arn = aws_alb_listener.https.arn
+  priority     = 1
+
+  action {
     type             = "forward"
+    target_group_arn = aws_lb_target_group.main.arn
+  }
+
+  condition {
+    http_header {
+      http_header_name = "x-pre-shared-token"
+      values           = [var.pre_shared_token]
+    }
   }
 }
 

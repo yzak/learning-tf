@@ -5,6 +5,9 @@ output "rds_address" {
 output "elb_dns_name" {
   value = module.elb.dns_name
 }
-output "fqdn" {
-  value = module.route53.fqdn
+output "elb_fqdn" {
+  value = module.elb_route53.fqdn
+}
+output "cdn_fqdn" {
+  value = module.cdn_route53.fqdn
 }

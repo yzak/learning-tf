@@ -3,18 +3,11 @@ variable "prefix" {
   type = string
 }
 
-variable "vpc_id" {
+variable "cdn_domain_name" {
   type = string
 }
 
-variable "public_subnets" {
-  type = map(object({
-    id  = string
-    arn = string
-  }))
-}
-
-variable "launch_template_id" {
+variable "elb_domain_name" {
   type = string
 }
 

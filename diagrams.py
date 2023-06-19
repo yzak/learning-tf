@@ -1,9 +1,9 @@
-from diagrams import Cluster, Diagram, Edge
+from diagrams import Cluster, Diagram
+from diagrams.aws.network import CF
 from diagrams.aws.network import InternetGateway
 from diagrams.aws.network import RouteTable
 from diagrams.aws.network import ALB
 from diagrams.aws.network import Route53
-from diagrams.aws.security import ACM
 from diagrams.aws.compute import EC2
 from diagrams.aws.database import RDS
 from diagrams.aws.storage import EFS
@@ -12,6 +12,7 @@ from diagrams.aws.compute import EC2AutoScaling
 with Diagram("learning-tf", show=False, direction="TB"):
     with Cluster("AWS for development"):
         r53 = Route53("Route53")
+        cdn = CF("CloudFront")
         with Cluster("Region ap-northeast-1"):
             with Cluster("VPC 10.0.0.0/21"):
                 igw = InternetGateway("InternetGateway")
@@ -31,7 +32,7 @@ with Diagram("learning-tf", show=False, direction="TB"):
                         RouteTable("RouteTable\n1c")
                     with Cluster("PrivateSubnet \n10.0.3.0/24"):
                         RouteTable("RouteTable\n1c")
-                igw >> alb >> scaling
+                cdn >> igw >> alb >> scaling
                 scaling >> ec2_1a
                 scaling >> ec2_1c
                 ec2_1a >> efs

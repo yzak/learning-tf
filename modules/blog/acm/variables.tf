@@ -7,7 +7,7 @@ variable "host_zone_name" {
   type = string
 }
 
-variable "elb_host_name" {
+variable "host_name" {
   type = string
 }
 

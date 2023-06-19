@@ -22,3 +22,7 @@ variable "efs_id" {
 variable "db_host" {
   type = string
 }
+
+variable "cdn_domain_name" {
+  type = string
+}

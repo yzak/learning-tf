@@ -65,6 +65,7 @@ resource "aws_launch_template" "main" {
     {
       efs_id  = var.efs_id
       db_host = var.db_host
+      cdn_domain_name = var.cdn_domain_name
     }
   ))
   tags = {

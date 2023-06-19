@@ -28,3 +28,7 @@ variable "host_zone_name" {
 variable "elb_host_name" {
   type = string
 }
+
+variable "cdn_host_name" {
+  type = string
+}

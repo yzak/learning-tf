@@ -2,7 +2,7 @@
 resource "aws_acm_certificate" "main" {
   domain_name               = var.host_zone_name
   validation_method         = "DNS"
-  subject_alternative_names = [var.elb_host_name]
+  subject_alternative_names = [var.host_name]
   lifecycle {
     create_before_destroy = true
   }

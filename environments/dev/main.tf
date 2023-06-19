@@ -28,6 +28,7 @@ locals {
   prefix         = "${data.aws_default_tags._.tags.Project}-${data.aws_default_tags._.tags.Env}"
   host_zone_name = "R53_HOST_ZONE_NAME" # Route53のホストゾーン名
   elb_host_name  = "elb.${local.host_zone_name}"
+  cdn_host_name  = local.host_zone_name
 }
 
 # モジュールの呼び出し
@@ -50,6 +51,10 @@ module "blog" {
   private_subnets = module.base.private_subnets
   host_zone_name  = local.host_zone_name
   elb_host_name   = local.elb_host_name
+  cdn_host_name   = local.cdn_host_name
+  providers = {
+    aws.virginia = aws.virginia
+  }
 }
 
 # モジュールの呼び出し結果の値を表示してみる
@@ -82,6 +87,9 @@ output "elb_dns_name" {
   value = module.blog.elb_dns_name
 }
 
-output "fqdn" {
-  value = module.blog.fqdn
+output "elb_fqdn" {
+  value = module.blog.elb_fqdn
+}
+output "cdn_fqdn" {
+  value = module.blog.cdn_fqdn
 }
