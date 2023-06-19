@@ -34,9 +34,6 @@
   - 関連して必要な情報を、`variable.tf`,`output.tf`に記載します
 - `modules/blog/ec2/tpl/user_data.sh`
   - WordPressの初期構築時のドメインをCloudFrontに統一させるための設定を追加します
-- `modules/blog/ec2/variables.tf`
-  - `aws_launch_template`のユーザーデータを用いて、`efs`をマウントするため、efsのidを追加します
-  - 同様にユーザーデータで、WordPressのDB接続情報を設定するため、rdsの接続先を追加します
 - `modules/blog/elb/main.tf`
   - CloudFront経由のリクエストのみを処理するように、CloudFrontで定めたHTTPヘッダがある場合のみEC2に転送し、それ以外は403を返すように設定します
 
